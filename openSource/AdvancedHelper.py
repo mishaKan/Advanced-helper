@@ -1,7 +1,8 @@
-import tkinter.colorchooser,flet,os,tkinter,json,io,PIL,base64
+import tkinter.colorchooser,os,tkinter,json,io,PIL,base64,time
 from PIL import Image
 from pathlib import Path
 import pyperclip as cl
+import flet as ft
 
 data = {"bg_col" : "#2f3048"}
 dataJsonName = "save.json"
@@ -14,11 +15,11 @@ sellectTheamImg = Image
 theamColorBtnSize = 50
 
 def getSave():
-    global data
+    global data,pagebgcolor
     with open(dataJsonName,"r",encoding="utf-8") as saves:
         data = json.load(saves)
 def doSave():
-    global data
+    global data,pagebgcolor
     with open(dataJsonName,"w") as saves:
         json.dump(data,saves,indent=5,ensure_ascii=False)
 try:
@@ -39,43 +40,40 @@ def doToImage():
 
 #doToImage()
 
-def chooseColor():
-    chooseBg = tkinter.colorchooser.askcolor()
-    data["bg_col"] = chooseBg[1]
-    pagebgcolor = flet.colors.with_opacity(1,data["bg_col"])
-    doSave()
-    #chooseColor()
-    getSave()
-def main(page : flet.Page):
-    global bg
-    page.window.bgcolor = flet.colors.TRANSPARENT
-    page.bgcolor = flet.colors.with_opacity(1,data["bg_col"])
-    page.controls.append(flet.Text(value="Hello, user!",color="cyan"))
+
+def main(page : ft.Page):
+    global bg,coeff,pagebgcolor
+    def chooseColor(e):
+        global pagebgcolor
+        chooseBg = tkinter.colorchooser.askcolor()
+        data["bg_col"] = chooseBg[1]
+        pagebgcolor = ft.colors.with_opacity(1,data["bg_col"])
+        doSave()
+        pagebgcolor = ft.colors.with_opacity(1,chooseBg[1])
+        getSave()
+        page.bgcolor = ft.colors.with_opacity(1,data["bg_col"])
+        page.update()
+    page.window.bgcolor = ft.colors.TRANSPARENT
+    page.bgcolor = ft.colors.with_opacity(1,data["bg_col"])
+    page.controls.append(ft.Text(value="Hello, user!",color="cyan"))
     path = Path(__file__).parent
+    page.expand=True
     page.add(
-        flet.Stack(
-            width=100,
-            height=100,
+        ft.Column(
             controls=[
-                flet.Positioned(
-                    left=10,
-                    top=10,
-                    child=flet.Icon(flet.icons.FAVORITE, size=24)
-                ),
-                flet.positioned(
-                    right=10,
-                    bottom=10,
-                    child=flet.Icon(flet.icons.FAVORITE, size=24, color=flet.colors.RED)
+                ft.Container(
+                    width=50,
+                    height=50,
+                    content=ft.IconButton(icon=ft.icons.PALETTE_OUTLINED,scale=6,icon_size=10,alignment=ft.alignment.center,highlight_color=ft.colors.RED_500,disabled_color=ft.colors.TRANSPARENT,on_click=chooseColor,data=0),
+                    margin=ft.margin.only(top=500,left=10),
+                    border_radius=20,
                 )
-            ]
+            ],
         )
     )
-    theamSellectButton = flet.IconButton(icon=flet.icons.PALETTE,icon_size=theamColorBtnSize)
-    
-    page.add(theamSellectButton)
-
-    
     page.update()
-
-
-flet.app(target=main)
+        
+ft.app(target=main)
+while(True):
+    getSave()
+    
