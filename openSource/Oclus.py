@@ -6,8 +6,11 @@ import flet as ft
 
 data = {"bg_col" : "#2f3048"}
 dataJsonName = "save.json"
+#collors
+backGroundCollors = {"standart" : "#2f3048"}
 
-#images bytes 
+
+#images bytes
 #images
 sellectTheamImg = Image
 
@@ -46,6 +49,9 @@ def main(page : ft.Page):
     def chooseColor(e):
         global pagebgcolor
         chooseBg = tkinter.colorchooser.askcolor()
+
+
+
         data["bg_col"] = chooseBg[1]
         pagebgcolor = ft.colors.with_opacity(1,data["bg_col"])
         doSave()
@@ -53,11 +59,25 @@ def main(page : ft.Page):
         getSave()
         page.bgcolor = ft.colors.with_opacity(1,data["bg_col"])
         page.update()
+        print(data["bg_col"])
     page.window.bgcolor = ft.colors.TRANSPARENT
     page.bgcolor = ft.colors.with_opacity(1,data["bg_col"])
     page.controls.append(ft.Text(value="Hello, user!",color="cyan"))
     path = Path(__file__).parent
     page.expand=True
+    options = [
+        ft.dropdown.Option(
+            content=ft.Row([ft.Icon(ft.icons.SETTINGS), ft.Text("Настройки")])
+            
+        ),
+        ft.dropdown.Option(
+            content=ft.Row([ft.Icon(ft.icons.INFO), ft.Text("Информация")])
+        ),
+        ft.dropdown.Option(
+            content=ft.Row([ft.Icon(ft.icons.EXIT_TO_APP), ft.Text("Выход")])
+        ),
+    ]
+    page.add(options)
     page.add(
         ft.Column(
             controls=[
