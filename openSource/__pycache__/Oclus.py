@@ -4,13 +4,14 @@ from rich.console import Console
 import Loop
 data = {"bg_col" : "#2f3048"}
 dataJsonName = "save.json"
-
+console = Console()
 def getSave():
-    global data,pagebgcolor
+    global data
     with open(dataJsonName,"r",encoding="utf-8") as saves:
         data = json.load(saves)
 def doSave():
-    global data,pagebgcolor
+    global data
+    console.print(1)
     with open(dataJsonName,"w") as saves:
         json.dump(data,saves,indent=5,ensure_ascii=False)
 try:
@@ -19,7 +20,7 @@ except:
      pass
 doSave()
 
-console = Console()
+
 
 
 
